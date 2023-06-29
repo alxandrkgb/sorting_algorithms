@@ -1,39 +1,46 @@
 #include "sort.h"
-
 /**
- * insertion_sort_list - Sorts a doubly linked list of integers in ascending order using insertion sort
- * @list: Double pointer to the head of the list
+ * insertion_sort_list - function that sorts a doubly linked list
+ * of integers in ascending order using the Insertion sort algorithm
+ * @list: Dobule linked list to sort
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *current;
+	listint_t *node;
 
-	if (list == NULL || *list == NULL || (*list)->next == NULL)
+	if (list == NULL || (*list)->next == NULL)
 		return;
-
-	current = (*list)->next;
-	while (current != NULL)
+	node = (*list)->next;
+	while (node)
 	{
-		listint_t *next = current->next;
-		listint_t *temp = current;
-
-		while (temp->prev != NULL && temp->n < temp->prev->n)
+		while ((node->prev) && (node->prev->n > node->n))
 		{
-			if (temp->next != NULL)
-				temp->next->prev = temp->prev;
-			temp->prev->next = temp->next;
-			temp->next = temp->prev;
-			temp->prev = temp->prev->prev;
-			temp->next->prev = temp;
-
-			if (temp->prev == NULL)
-				*list = temp;
-			else
-				temp->prev->next = temp;
-
+			node = swap_node(node, list);
 			print_list(*list);
 		}
-
-		current = next;
+		node = node->next;
 	}
+}
+/**
+ *swap_node - swap a node for his previous one
+ *@node: node
+ *@list: node list
+ *Return: return a pointer to a node which was enter it
+ */
+listint_t *swap_node(listint_t *node, listint_t **list)
+{
+	listint_t *back = node->prev, *current = node;
+	/*NULL, 19, 48, 9, 71, 13, NULL*/
+
+	back->next = current->next;
+	if (current->next)
+		current->next->prev = back;
+	current->next = back;
+	current->prev = back->prev;
+	back->prev = current;
+	if (current->prev)
+		current->prev->next = current;
+	else
+		*list = current;
+	return (current);
 }
